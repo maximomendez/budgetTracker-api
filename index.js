@@ -1,11 +1,11 @@
 import { ApolloServer } from "@apollo/server"
 import { startStandaloneServer } from "@apollo/server/standalone"
-import { typeDefs } from "./schemas/index.js";
-import { resolvers } from "./resolvers/index.js";
- 
+import mergeSchemasArray from "./schemas/index.js";
+import mergeResolversArray from "./resolvers/index.js";
+
 const server = new ApolloServer({
-  typeDefs,
-  resolvers,
+  typeDefs: mergeSchemasArray,
+  resolvers: mergeResolversArray,
 })
  
 const { url } = await startStandaloneServer(server)
