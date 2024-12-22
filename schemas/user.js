@@ -10,14 +10,16 @@ const userSchema = `#graphql
   
   type User {
     id: ID!
+    username: String!
     name: String!
-    email: String!
     password: String!
-    telephone: String
-    city: String
-    state: String
-    latitude: Float
-    longitude: Float
+    profilePicture: String!
+    gender: Gender!
+  }
+
+  enum Gender {
+    male
+    female
   }
 `;
 

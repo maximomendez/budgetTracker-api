@@ -3,7 +3,7 @@ const transactionSchema = `#graphql
         id: ID!
         userId: ID!
         description: String!
-        paymentMethod: String!
+        paymentMethod: PaymentMethod!
         category: String!
         amount: Float!
         location: String
@@ -38,6 +38,12 @@ const transactionSchema = `#graphql
         amount: Float,
         location: String,
         date: String
+    }
+
+    enum PaymentMethod {
+        cash
+        credit
+        debit
     }
 `;
 
