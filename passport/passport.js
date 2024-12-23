@@ -7,12 +7,10 @@ import { GraphQLLocalStrategy } from "graphql-passport";
 export const configurePassport = async () => {
   // Serialize and deserialize the user
   passport.serializeUser((user, done) => {
-    console.log("Serializing user: ", user);
     done(null, user.id);
   });
 
   passport.deserializeUser(async (id, done) => {
-    console.log("Deserializing user: ", id);
     try {
       const user = await User.findById(id);
       done(null, user);

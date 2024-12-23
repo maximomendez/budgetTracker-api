@@ -12,6 +12,7 @@ const userSchema = `#graphql
     id: ID!
     username: String!
     name: String!
+    email: String!
     password: String!
     profilePicture: String!
     gender: Gender!
