@@ -11,11 +11,11 @@ const transactionSchema = `#graphql
     }
 
     type Query {
-        getTransactions: [Transaction]!
+        getTransactions: [Transaction!]!
         getTransaction(id: ID!): Transaction!
     }
 
-    type mutation {
+    type Mutation {
         createTransaction(transactionInput: CreateTransactionInput!): Transaction!
         updateTransaction(id: ID!, transactionInput: UpdateTransactionInput!): Transaction!
         deleteTransaction(id: ID!): Transaction!
@@ -23,7 +23,7 @@ const transactionSchema = `#graphql
 
     input CreateTransactionInput {
         description: String!
-        paymentMethod: String!
+        paymentMethod: PaymentMethod!
         category: String!
         amount: Float!
         date: String!
@@ -31,9 +31,8 @@ const transactionSchema = `#graphql
     }
 
     input UpdateTransactionInput {
-        transactionId: ID!,
         description: String,
-        paymentMethod: String,
+        paymentMethod: PaymentMethod,
         category: String,
         amount: Float,
         location: String,
