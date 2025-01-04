@@ -20,6 +20,9 @@ importers:
       connect-mongo:
         specifier: ^5.1.0
         version: 5.1.0(express-session@1.18.1)(mongodb@6.12.0)
+      cors:
+        specifier: ^2.8.5
+        version: 2.8.5
       dotenv:
         specifier: ^16.4.7
         version: 16.4.7

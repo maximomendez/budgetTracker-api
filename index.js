@@ -8,6 +8,7 @@ import mergeResolversArray from "./resolvers/index.js";
 import express from "express";
 import http from "http";
 import dotenv from "dotenv";
+import cors from "cors";
 import RequireAuth from "./middlewares/requireAuth.js";
 
 dotenv.config();
@@ -21,10 +22,14 @@ const server = new ApolloServer({
   plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
 });
 
+app.use(cors({
+  origin: "http://localhost:3000",  // Permitir solo solicitudes desde http://localhost:3000
+  credentials: true,  // Habilitar cookies, si es necesario
+}));
+
 await server.start();
 
 // Middlewares de Express
-
 app.use(express.json());
 
 // Middleware de autenticación antes de Apollo Server

@@ -10,7 +10,7 @@ const RequireAuth = async (req, res, next) => {
 
   const isEndPointAllowed = endPointsAllowed.some((op) => query.includes(op));
 
-  if (isEndPointAllowed || (req.path === "/login" || req.path === "/register")) {
+  if (isEndPointAllowed) {
     return next();
   }
 
