@@ -1,9 +1,31 @@
 import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
+import jwt from "jsonwebtoken";
+import User from "../models/User.js";
+
+// create token with user id
+const createToken = (userId) => {
+  // expiresIn is set to 1 day
+  // JWT_SECRET is a secret string that is used to sign the token
+  return jwt.sign({ userId }, process.env.SESSION_SECRET, { expiresIn: "1d" });
+};
 
 const authResolvers = {
+  Query: {
+    getUserAuthenticated: async (_, __, { user }) => {
+      try {
+        if (!user) {
+          throw new Error("User not authenticated yet");
+        }
+
+        return user;
+      } catch (error) {
+        throw new Error(error.message);
+      }
+    },
+  },
   Mutation: {
-    signUp: async (_, { signUpInput }, context) => {
+    signUp: async (_, { signUpInput }) => {
       const { User } = mongoose.models;
       try {
         const { username, name, email, password, gender } = signUpInput;
@@ -36,67 +58,49 @@ const authResolvers = {
           gender,
         });
 
+        // Crear el token JWT
+        const token = jwt.sign(
+          { _id: newUser._id },
+          process.env.SESSION_SECRET,
+          {
+            expiresIn: "1h", // Puedes ajustar la expiración según lo necesites
+          }
+        );
+
         await newUser.save();
-        await context.login(newUser);
-        return newUser;
+        return { User: newUser, token };
       } catch (error) {
         throw new Error(error.message);
       }
     },
-    login: async (_, { loginInput }, context) => {
+    login: async (_, { loginInput }) => {
       try {
         const { email, password } = loginInput;
-        const { user, info } = await context.authenticate("graphql-local", {
+
+        const user = await User.findOne({
           email,
-          password,
         });
 
-        if (info?.message) {
-          throw new Error(info.message);
+        if (!user) {
+          throw new Error("User does not exist");
         }
 
-        if (user) {
-          await context.login(user);
-          return user;
+        const validPassword = await bcrypt.compare(password, user.password);
+
+        if (!validPassword) {
+          throw new Error("Invalid password");
         }
+
+        // Crear el token JWT
+        const token = jwt.sign({ _id: user._id }, process.env.SESSION_SECRET, {
+          expiresIn: "1h", // Puedes ajustar la expiración según lo necesites
+        });
+
+        return { User: user, token };
       } catch (error) {
         throw new Error(error.message);
       }
     },
-    logout: async (_, __, context) => {
-      try {
-        const userAuth = await context.getUser();
-
-        if (!userAuth) {
-          throw new Error("User is not login to logout yet");
-        }
-
-        await context.logout();
-        context.req.session.destroy((error) => {
-          if (error) {
-            throw new Error("Error in destroying session");
-          }
-        });
-
-        context.res.clearCookie("connect.sid");
-        return "Logged out successfully";
-      } catch (error) {
-        throw new Error(error.message);
-      }
-    },
-    getUserAuthenticated: async (_, __, context) => {
-      try {
-        const userAuth = await context.getUser();
-        
-        if (!userAuth) {
-          throw new Error("User not authenticated yet");
-        }
-        return userAuth;
-        
-      } catch (error) {
-        throw new Error(error.message);
-      }
-    }
   },
 };
 

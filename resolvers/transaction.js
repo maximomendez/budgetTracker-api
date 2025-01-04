@@ -2,8 +2,7 @@ import Transaction from "../models/transaction.js";
 
 const transactionResolver = {
   Query: {
-    getTransactions: async (_, __, context) => {
-      const user = await context.getUser();
+    getTransactions: async (_, __, { user }) => {
       if (!user) {
         throw new Error("User not authenticated yet");
       }
@@ -11,8 +10,7 @@ const transactionResolver = {
       const transactions = await Transaction.find({ userId: user._id });
       return transactions
     },
-    getTransaction: async (_, { id }, context) => {
-      const user = await context.getUser();
+    getTransaction: async (_, { id }, { user}) => {
       if (!user) {
         throw new Error("User not authenticated yet");
       }
@@ -22,8 +20,7 @@ const transactionResolver = {
     },
   },
   Mutation: {
-    createTransaction: async (_, { transactionInput}, context) => {
-      const user = await context.getUser();
+    createTransaction: async (_, { transactionInput}, { user }) => {
       if (!user) {
         throw new Error("User not authenticated yet");
       }
@@ -36,8 +33,7 @@ const transactionResolver = {
       return transaction.save();
     },
 
-    updateTransaction: async (_, { id, transactionInput }, context) => {
-      const user = await context.getUser();
+    updateTransaction: async (_, { id, transactionInput }, { user }) => {
       if (!user) {
         throw new Error("User not authenticated yet");
       }
@@ -54,15 +50,13 @@ const transactionResolver = {
       transaction.set(transactionInput);
       return transaction.save();
     },
-    deleteTransaction: async (_, { id }, context) => {
-      const user = await context.getUser();
+    deleteTransaction: async (_, { id }, { user }) => {
       if (!user) {
         throw new Error("User not authenticated yet");
       }
 
       const transaction = await Transaction.findById(id);
-      console.log("transaction")
-      console.log(transaction)
+
       if (!transaction) {
         throw new Error("Transaction not found");
       }

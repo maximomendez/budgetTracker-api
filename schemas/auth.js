@@ -1,13 +1,16 @@
 const authSchema = `#graphql
   type Query {
-    _empty: String
+    getUserAuthenticated: User
   }
 
   type Mutation {
-    getUserAuthenticated: User!
-    signUp(signUpInput: SignUpInput!): User!
-    login(loginInput: LoginInput!): User!
-    logout: String!
+    signUp(signUpInput: SignUpInput!): UserAuthenticated!
+    login(loginInput: LoginInput!): UserAuthenticated!
+  }
+
+  type UserAuthenticated {
+    User: User!
+    token: String!
   }
 
   input SignUpInput {
